@@ -1,0 +1,793 @@
+---
+title: "DEI Project"
+author: "Daniel Han"
+date: "5/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#clear Variables
+rm(list=ls())
+
+library(tidyverse)
+```
+
+
+```{r}
+#read in the data
+df <- read.csv(file.choose())
+df
+#ls(df)
+ft <- df%>%
+  filter(df$What.is.your.role.in.the.Department.of.Statistics. == "Faculty or Staff")
+
+ft[rowSums(is.na(ft)) > 0, ]
+
+
+  
+attach(ft)
+
+
+```
+
+```{r}
+#Dr.Analisa wants all options to show
+
+#converting all agree and disagrees to 1-5
+number_terms <- function(response)
+{
+  response <- ifelse(response == "Strongly disagree", 1, 
+                     ifelse(response == "Disagree", 2, 
+                            ifelse(response == "Neutral", 3,
+                                   ifelse(response == "Agree", 4, 
+                                          ifelse(response ==  "Strongly agree", 5 , 5)))))
+  print(response)
+  return(response)
+}
+
+# For Responses with 1-5 Options
+# Change numerical response to agree/disagree response
+label_terms <- function(response){
+  
+  response <- ifelse(response <= 1, "Strongly Disagree", 
+                     ifelse(response == 2, "Disagree", 
+                            ifelse(response == 3, "Neutral", 
+                                   ifelse(response == 4, "Agree", 
+                                          ifelse(response == 5, "Strongly Agree", "Error")))))
+  
+  print(response)
+  
+  response <- as.factor(response)
+  
+  response <- factor(response, levels = c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"))
+  return(response)
+}
+
+
+
+
+#bar plot functions
+
+#Given a number response (1-5)
+barplot_func1 <- function(name, header, title_size)
+{
+ 
+  
+  c <- label_terms(name) 
+
+  cCount <- table(c)
+
+  y_limit <- sum(cCount)
+
+x <- barplot(cCount, col = "#6aa4c8", main = header,xlab = "Response", ylab = "Count", cex.main = title_size, yaxp=c(range(cCount),max(cCount))) #fixes decimal on y axis issue
+
+ return(x)
+}
+
+
+#given a option response (agreed, disagree. etc)
+barplot_func2 <- function(name, header, title_size)
+{
+  
+  y <- number_terms(name)
+  
+  c <- label_terms(y) 
+  
+  cCount <- table(c)
+
+
+x <- barplot(cCount, col = "#6aa4c8", main = header,xlab = "Response", ylab = "Count", cex.main = title_size, yaxp=c(range(cCount),max(cCount))) #fixes decimal on y axis issue
+
+ return(x)
+}
+```
+
+```{r}
+#Descriptive analysis for Faculty or Staff
+
+barplot_func1(I.am.comfortable.identifying.gender.sexual.orientation.race.disability.discrimination.,
+              "I am comfortable identifying gender, sexual orientation, race, disability, and discrimination",
+              0.7)
+
+barplot_func2(I.have.an.opportunity.to.contribute.to.decisions.that.affect.me.,
+              "I have an opportunity to contribute to decisions that affect me.",
+              1)
+
+barplot_func1(I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc.., 
+             "I have a clear understanding of implicit bias and microaggressions as they pertain to race, culture,sexual orientation,gender,disabilites etc" ,
+             0.55)
+
+barplot_func2(I.am.able.to.openly.and.honestly.communicate.my.views., 
+             "I am able to openly and honestly communicate my views." ,
+             1)
+
+barplot_func2(How.likely.is.it.that.you.would.recommend.this.department.as.an.employer.to.a.friend.or.colleague., 
+             "How likely is it that you would recommend this department as an employer to a friend or colleague?" ,
+             0.7)
+
+barplot_func2(I.feel.comfortable.expressing.my.concerns.constructive.criticisms.to.my.department., 
+             "I feel comfortable expressing my concerns, constructive criticisms to my department." ,
+             1)
+
+barplot_func2(I.know.what.is.expected.of.me.at.work., 
+             "I know what is expected of my at work." ,
+             1)
+
+barplot_func2(My.performance.on.the.job.is.evaluated.fairly., 
+             "My performance on the job is evaluated fairly." ,
+             1)
+
+             
+barplot_func2(My.department.encourages.supports.me.in.meeting.my.annual.goals., 
+             "My department encourages and supports me in meeting my annual goals.",
+             1)
+
+barplot_func2(My.department.understands.my.job.problems.and.needs., 
+             "My department understands my job problems and needs.",
+             1)
+
+barplot_func2(My.department.encourages.new.ideas..processes..and.ways.to.do.my.job., 
+             "My department encourages new ideas processes, and ways to do my job.",
+             1)
+
+barplot_func2(I.feel.supported.in.my.professional.development.and.growth.  , 
+             "I feel supported in my professional development and growth.",
+             1)
+
+barplot_func2(My.department.holds.employees.accountable.for.their.performance. , 
+             "My department holds employees accountable for their performance.",
+             1)
+
+barplot_func2(In.my.department..there.is.a.strong.sense.of.community.building.. , 
+             "In my department, there is a strong sense of community building.",
+             1)
+
+barplot_func2(I.have.an.effective.working.relationship.with.my.department. , 
+             "I have an effective working relationship with my department.",
+             1)
+
+barplot_func1(I.feel.safe.on.this.campus. , 
+             "I feel safe on campus.",
+             1)
+
+barplot_func2(My.department.members.have.a.clear.understanding.of.what.equity.and.inclusion.entail. , 
+             "My department members have a clear understanding of what equity and inclusion entail.",
+             1)
+
+barplot_func2(In.my.department..there.are.sufficient.efforts.towards.fostering.diversity..equity..and.inclusion.within.departmental.practices..recruiting..hiring..policy..research..etc... , 
+             "In my department, there are sufficient efforts towards fostering diversity,equity, and inclusion within departmental practice, recuirting, hiring, policy, research, etc.",
+             0.5)
+
+barplot_func2(My.department.has.a.strong.commitment.to.ensuring.a.healthy.climate.and.psychological.safety.for.academic.success. , 
+             "My department has a strong commitment to ensuring a healthy climate and psychological safety for academic success.",
+             0.6)
+
+barplot_func2(I.feel.valued.as.an.individual.in.my.department. , 
+             "I feel valued as an individual in my department.",
+             1)
+
+barplot_func2(I.am.treated.with.respect.in.my.department. , 
+             "I am treated with respect in my department.",
+             1)
+
+barplot_func2(I.feel.my.opinions.are.valued.within.my.department. , 
+             "I feel my opinions are valued within my department.",
+             1)
+
+barplot_func2(My.experience.in.this.department.has.had.a.positive.influence.on.my.professional.growth. , 
+             "My experience in this department has had a positive influence on my professional growth.",
+             0.9)
+
+barplot_func2(I.am.valued.in.my.department.for.my.contributions..e.g..teaching..research.scholarship.creativity..service.contributions..mentoring.of.students..mentoring.of.faculty.. , 
+             "I am valued in my department for my contributions, eg. teaching, research, scholoarship, creativity, service, contribution, mentoring of students, mentoring of faculty.",
+             0.5)
+
+barplot_func2(There.are.fair.and.equitable.processes.for.determining.compensation.advancement.in.my.department. , 
+             "There are fair and equitable processes for determining compensation advancement in my department.",
+             0.8)
+
+barplot_func2(Support.is.provided.fairly.and.equitably.in.my.department. , 
+             "Support is provided fairly and equitably in my department.",
+             1)
+
+```
+```{r}
+#Given a number response (1-5) with NA check
+barplot_func3 <- function(name, header, title_size)
+{
+ 
+  check <- na.omit(name)
+  
+  c <- label_terms(check) 
+
+  Count <- table(c)
+
+
+y = c(Count)
+#finding percentage for variable
+Percentage =c(y[1:length(Count)]/sum(y)*100)
+Percentage = format(round(Percentage, 3), nsmall = 2)
+#adding percentage and freq to a single table
+total <- rbind(Count, Percentage)
+  
+x <- barplot(Count, col = "#6aa4c8", main = header,xlab = "Response", ylab = "Count", cex.main = title_size) 
+text(x, Count - 0.7 , Count, font=0.5)
+
+ return(total)
+}
+
+
+#given a option response (agreed, disagree. etc) with NA check
+barplot_func4 <- function(name, header, title_size)
+{
+  check <- na.omit(name)
+  
+  y <- number_terms(check)
+  
+  c <- label_terms(y) 
+  
+  Count <- table(c)
+
+  
+  
+y = c(Count)
+#finding percentage for variable
+Percentage =c(y[1:length(Count)]/sum(y)*100)
+Percentage = format(round(Percentage, 3), nsmall = 2)
+#adding percentage and freq to a single table
+total <- rbind(Count, Percentage)
+  
+x <- barplot(Count, col = "#6aa4c8", main = header,xlab = "Response", ylab = "Count", cex.main = title_size) 
+text(x, Count - 0.7 , Count, font=0.5)
+
+ return(total)
+  
+}
+```
+
+```{r}
+ u_ug <- df%>%
+  filter(df$What.is.your.role.in.the.Department.of.Statistics. != "Faculty or Staff")
+u_ug
+attach(u_ug)
+
+
+```
+
+```{r}
+#Descriptive analysis for students
+#Sample size groups of non-Faculty or Staff
+role <- table(What.is.your.role.in.the.Department.of.Statistics.)
+x <- barplot(role, cex.names = 0.6, main = 'Role Breakdown')
+x
+
+eth <- table(What.is.your.ethnicity.)
+x <- barplot(eth, cex.names = 0.5, main = 'Ethnicity Breakdown')
+x
+
+
+barplot_func4(I.feel.valued.in.the.classroom.department.learning.environment.,
+              "I feel valued in the classroom department learning environment.",
+              1)
+
+
+
+
+barplot_func4(The.faculty.and.staff.in.the.department.respect.what.students.think.,
+              "The faculty and staff in the department respect what students think.",
+              1)
+
+
+
+barplot_func4(Faculty.in.the.department.are.genuinely.concerned.about.my.welfare.,
+              "Faculty in the department are geninely concerned about my welfare.",
+              1)
+
+barplot_func4(Staff.in.the.department.are.genuinely.concerned.about.my.welfare.,
+              "Staff in the department are genuinely concerned about my welfare.",
+              1)
+
+barplot_func4(I.feel.close.to.people.in.the.department.,
+              "I feel close to people in the department.",
+              1)
+
+barplot_func3(I.am.comfortable.identifying.gender.sexual.orientation.race.disability.discrimination.,
+              "I am comfortable identifying gender, seuxual orientation, race, disability, discrimination.",
+              0.8)
+
+barplot_func4(The.faculty.and.staff.at.this.department.treat.students.fairly.,
+              "The faculty and staff at this department treat student fairly.",
+              1)
+
+barplot_func3(I.feel.safe.on.this.campus.,
+              "I feel safe on this campus.",
+              1)
+barplot_func4(I.know.where.to.go.for.help..if.needed..e.g..Food.Pantry..Title.IX.Office..Student.Disability.Resource.Center..SDRC...Office.of.Diversity..Equity.and.Inclusion..Counseling.and.Psychological.Services..CAPS...Case.Management..Student.Health.Services..The.WELL..etc...,
+              "I know where to go for help if needed, eg. food pantry, student disability, etc.",
+              1)
+
+barplot_func4(I.know.how.to.report.misconduct.,
+              "I know how to report misconduct.",
+              1)
+
+barplot_func4(I.feel.comfortable.reporting.misconduct..if.needed.,
+              "I feel comfortable reporting misconduct, if needed.",
+              1)
+
+barplot_func4(Department.leadership.handles.student.incidents.and.reported.student.challenges.in.a.fair.and.responsible.manner.,
+              "Department leadership handles student incidents and reported student chalenges in a fiar and responsible manner.",
+              0.6)
+
+barplot_func4(If.a.crisis.happened.on.campus..the.department.would.handle.it.well.,
+              "If a crisis happened on campus, the department would handle it well.",
+              1)
+
+barplot_func4(The.department.responds.in.a.timely.manner.to.difficult.situations.,
+              "The department responds in a timely manner to difficult situations.",
+              1)
+
+barplot_func4(The.department.does.enough.to.protect.the.safety.of.students.,
+              "The department does enough to protect the safety of students.",
+              1)
+
+barplot_func4(The.department.consults.with.other.campus.resource.offices.to.appropriately.guide.students.with.their.needs.,
+              "The department consults with other campus resource offices to appropriately guide students with their needs.",
+              0.6)
+
+barplot_func4(The.department.enforces.accountability.for.reported.unprofessional.faculty.conduct.,
+              "The department enforces accountability for reported unprofessional faculty conduct.",
+              1)
+
+barplot_func4(The.faculty.in.my.department.recognize.inappropriate.statements.and.behavior.that.perpetuate.systemic.inequities.and.forms.of.discrimination.,
+              "The faculty in my department recognize inappropriate statements and behavior that perpetuate systemic in equities and forms of discrimination.",
+              0.5)
+
+barplot_func4(There.are.other.faculty.I.can.go.to.for.help.beyond.the.faculty.graduate.undergraduate.advisor.,
+              "There are other faculty I can go to for help beyond the faculty, graduate/undergraduate advisor.",
+              0.8)
+
+barplot_func4(My.faculty.graduate.undergraduate.advisor.can.address.all.student.needs.on.their.own.,
+              "My faculty/graduate/undergraduate advisor can address all student needs on their own.",
+              0.8)
+
+barplot_func4(My.faculty.graduate.undergraduate.advisor.responds.to.my.needs.in.a.timely.manner.,
+              "My faculty/graduate/undergraduate advisor responds to my needs in a timely manner.",
+              0.8)
+
+
+barplot_func4(There.is.a.strong.sense.of.a.graduate.undergraduate.student.community.and.peer.support.in.this.department.,
+              "There is a strong sense of a graduate/undergraduate student community and peer support in this department.",
+              0.7)
+
+barplot_func4(The.faculty.in.the.department.foster.a.strong.sense.of.intellectual.community.for.the.whole.,
+              "The faculty in the department foster a strong sense of intellectual community for the whole.",
+              0.8)
+
+
+barplot_func4(I.feel.supported.in.my.statistics.classes.,
+              "I feel supported in my statistics classes.",
+              1)
+
+
+barplot_func4(I.feel.comfortable.reaching.out.to.my.advisor.about.opportunities.related.to.my.major.tips.on.succeeding.,
+              "I feel comfortable reaching out to my advisor about opportunites related to my major tips on succeeding.",
+              0.8)
+
+barplot_func4(I.can.successfully.register.for.classes.that.are.needed.for.my.major.and.major.concentration.based.on.class.availability.,
+              "I can successfully register for classes that are needed for my major and major concentration based on class availability.",
+              0.6)
+
+barplot_func4(I.am.comfortable.reaching.out.to.my.instructors.for.questions.,
+              "I am comfortable reaching out to my instructors for questions.",
+              1)
+
+barplot_func4(Exams.given.by.my.instructors.in.the.department.are.fair.and.effective.at.testing.my.knowledge.of.the.material.,
+              "Exams given by my instructors in the department are fair and effective at testing my knowledge of the material.",
+              0.6)
+
+barplot_func4(I.feel.that.my.instructors.evaluate.me.unbiasedly.,
+              "I feel that my instrcutors evaluate me unbiasedly.",
+              1)
+
+barplot_func4(I.am.treated.fairly.by.my.fellow.students..TAs..and.instructors.,
+              "I am treated fairly by my fellow students, TA, and instructors.",
+              1)
+
+barplot_func4(I.am.provided.the.academic.resources.to.help.me.succeed.at.UCR..e.g..Information.Technology.Solutions..ITS...Academic.Resource.Center..ARC..Library..etc...,
+              "I am provided the academic resources to help my succeed at UCR, eg. information techonology solutions, etc. ",
+              0.6)
+
+barplot_func3(I.feel.that.I.am.informed.of.any.policy.or.instructional.changes.within.UCR.,
+              "I feel that I am informed by any policy or instructional changes within UCR.",
+              1)
+
+barplot_func4(My.TAs.are.available.to.me.if.I.have.any.questions.from.class.,
+              "My TAs are available to me if I have any questions from class.",
+              1)
+
+barplot_func4(I.am.comfortable.intervening.or.responding.to.incidents.of.gender.sexual.orientation.race.disability.discrimination.,
+              "I am comfortable intervening or responding to incidents of gender, sexual orientation, race, disability, discrimination",
+              0.7)
+
+barplot_func3(My.department.is.committed.to.forms.of.active.gender.sexual.orientation.race.disability.anti.discrimination.,
+              "My department is committed to forms of active gender, sexual orientation, race, disability, anti discrimination.",
+              0.7)
+
+barplot_func3(I.understand.my.individual.responsibility.to.antiracism.and.inclusion.,
+              "I understand my individual responsibility to antiracism and inclusion.",
+              1)
+
+barplot_func3(I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..,
+              "I have a clear understanding of implicit bias and microaggressions as they pertain to race, culture, sexual orientation, gender, disability, etc.",
+              0.55)
+
+barplot_func4(My.staff.graduate.undergraduate.advisor.can.address.all.student.needs.on.their.own.,
+              "My staff/graduate/undergraduate advisor can address all student needs on their own.",
+              1)
+
+
+
+barplot_func4(My.staff.graduate.undergraduate.advisor.responds.to.my.needs.in.a.timely.manner.,
+              "My staff/graduate/undergraduate advisor responds to my needs in a timely manner.",
+              1)
+
+#general pop.
+barplot_func3(df$I.feel.safe.on.this.campus.,
+              "I feel safe on this campus",
+              1)
+
+barplot_func3(df$I.am.comfortable.identifying.gender.sexual.orientation.race.disability.discrimination.,
+              "I.am.comfortable.identifying.gender.sexual.orientation.race.disability.discrimination.s safe on this campus",
+              1)
+
+barplot_func3(df$I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..,
+              "I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..",
+              1)
+
+
+
+```
+
+
+
+```{r}
+#seperating groups for comparison barplot
+DS1 <- df%>%
+  filter(df$What.is.your.role.in.the.Department.of.Statistics. == "Data Science major (BCOE)")
+DS2 <- df%>%
+  filter(df$What.is.your.role.in.the.Department.of.Statistics. == "Data Science major (CNAS)")
+
+DS <- rbind(DS1,DS2) # combining both DS majors
+
+G <- df%>%
+  filter(df$What.is.your.role.in.the.Department.of.Statistics. == "STAT Graduate student")
+
+UG <- df%>%
+  filter(df$What.is.your.role.in.the.Department.of.Statistics. == "STAT major")
+
+
+```
+
+
+```{r}
+#Comparison Barplot when given a option response (agreed, disagree. etc) with NA check 
+comp_barplot1 <- function(name1,name2,name3,header, title_size)
+{
+  check1 <- na.omit (name1)
+  check2 <- na.omit (name2)
+  check3 <- na.omit (name3)
+  
+  y1 <- number_terms(check1)
+  y2 <- number_terms(check2)
+  y3 <- number_terms(check3)
+  
+  DS <- table(label_terms(y1)) 
+  G <- table(label_terms(y2))
+  UG <- table(label_terms(y3)) 
+
+  Count <- rbind(DS,G,UG)
+
+barplot(Count,beside = TRUE,col=(rainbow(3)), main = header,cex.names = 0.6, cex.main = title_size)
+#Add legends
+legend("topleft", c("DS","G","UG"), cex=1.0, bty="all_n",fill=rainbow(3))
+
+}
+
+
+#Comparison Barplot when given a number response (1-5) with NA check
+comp_barplot2 <- function(name1,name2,name3, header, title_size)
+{
+ 
+  check1 <- na.omit (name1)
+  check2 <- na.omit (name2)
+  check3 <- na.omit (name3)
+
+  
+
+  
+  DS <- table(label_terms(check1)) 
+  G <- table(label_terms(check2))
+  UG <- table(label_terms(check3))
+  
+  Count <- rbind(DS,G,UG)
+
+barplot(Count,beside = TRUE,col=(rainbow(3)), main = header ,cex.names = 0.6, cex.main = title_size)
+#Add legends
+legend("topleft", c("DS","G","UG"), cex=1.0, bty="all_n",fill=rainbow(3))
+}
+
+#Comparison Barplot when given a option response (agreed, disagree. etc) with NA check, 4 options 
+comp_barplot3 <- function(name1,name2,name3,name4, header, title_size)
+{
+  check1 <- na.omit (name1)
+  check2 <- na.omit (name2)
+  check3 <- na.omit (name3)
+  check4 <- na.omit (name4)
+  
+  y1 <- number_terms(check1)
+  y2 <- number_terms(check2)
+  y3 <- number_terms(check3)
+  y4 <- number_terms(check4)
+  
+  DS <- table(label_terms(y1)) 
+  G <- table(label_terms(y2))
+  UG <- table(label_terms(y3)) 
+  Fac <- table(label_terms(y4)) 
+
+  Count <- rbind(DS,G,UG,Fac)
+
+barplot(Count,beside = TRUE,col=(rainbow(4)), main = header,cex.names = 0.6, cex.main = title_size)
+#Add legends
+legend("topleft", c("DS","G","UG","Fac"), cex=1.0, bty="all_n",fill=rainbow(4))
+
+}
+
+
+#Comparison Barplot when given a number response (1-5) with NA check, 4 options
+comp_barplot4 <- function(name1,name2,name3,name4, header, title_size)
+{
+ 
+  check1 <- na.omit (name1)
+  check2 <- na.omit (name2)
+  check3 <- na.omit (name3)
+  check4 <- na.omit (name4)
+  
+  DS <- table(label_terms(check1)) 
+  G <- table(label_terms(check2))
+  UG <- table(label_terms(check3))
+  Fac <- table(label_terms(check4))
+
+  Count <- rbind(DS,G,UG,Fac)
+
+barplot(Count,beside = TRUE,col=(rainbow(4)), main = header ,cex.names = 0.6, cex.main = title_size)
+#Add legends
+legend("topleft", c("DS","G","UG","Fac"), cex=1.0, bty="all_n",fill=rainbow(4))
+}
+
+```
+
+
+```{r}
+#Comparison Barplot
+comp_barplot1(DS$I.feel.valued.in.the.classroom.department.learning.environment.,
+              G$I.feel.valued.in.the.classroom.department.learning.environment.,
+              UG$I.feel.valued.in.the.classroom.department.learning.environment.,
+              "I feel valued in the classroom department learning environment.",
+              1)
+
+comp_barplot1(DS$I.feel.supported.in.my.statistics.classes.,
+              G$I.feel.supported.in.my.statistics.classes.,
+              UG$I.feel.supported.in.my.statistics.classes.,
+              "I feel supported in my statistics classes.",
+              1)
+
+comp_barplot1(DS$My.staff.graduate.undergraduate.advisor.responds.to.my.needs.in.a.timely.manner,
+              G$My.staff.graduate.undergraduate.advisor.responds.to.my.needs.in.a.timely.manner,
+              UG$My.staff.graduate.undergraduate.advisor.responds.to.my.needs.in.a.timely.manner,
+              "My staff/graduate/undergraduate advisor responds to my needs in a timely manner.",
+              1)
+
+comp_barplot2(DS$I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..,
+              G$I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..,
+              UG$I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..,
+              "I have a clear understanding of implicit bias and microaggressions as they pertain to race, culture, sexual orientation, gender, disability, etc.",
+              0.55)
+
+comp_barplot2(DS$My.department.is.committed.to.forms.of.active.gender.sexual.orientation.race.disability.anti.discrimination,
+              G$My.department.is.committed.to.forms.of.active.gender.sexual.orientation.race.disability.anti.discrimination,
+              UG$My.department.is.committed.to.forms.of.active.gender.sexual.orientation.race.disability.anti.discrimination,
+              "My department is committed to forms of active gender, sexual orientation, race, disability, anti discrimination.",
+              0.7)
+
+comp_barplot1(DS$I.am.comfortable.intervening.or.responding.to.incidents.of.gender.sexual.orientation.race.disability.discrimination.,
+              G$I.am.comfortable.intervening.or.responding.to.incidents.of.gender.sexual.orientation.race.disability.discrimination.,
+              UG$I.am.comfortable.intervening.or.responding.to.incidents.of.gender.sexual.orientation.race.disability.discrimination.,
+              "I am comfortable intervening or responding to incidents of gender, sexual orientation, race, disability, discrimination",
+              0.7)
+
+comp_barplot1(DS$I.feel.close.to.people.in.the.department.,
+              G$I.feel.close.to.people.in.the.department.,
+              UG$I.feel.close.to.people.in.the.department.,
+              "I feel close to people in the department.",
+              1)
+
+comp_barplot1(DS$Exams.given.by.my.instructors.in.the.department.are.fair.and.effective.at.testing.my.knowledge.of.the.material.,
+              G$Exams.given.by.my.instructors.in.the.department.are.fair.and.effective.at.testing.my.knowledge.of.the.material.,
+              UG$Exams.given.by.my.instructors.in.the.department.are.fair.and.effective.at.testing.my.knowledge.of.the.material.,
+              "Exams given by my instructors in the department are fair and effective at testing my knowledge of the material.",
+              0.6)
+
+comp_barplot1(DS$I.can.successfully.register.for.classes.that.are.needed.for.my.major.and.major.concentration.based.on.class.availability.,
+              G$I.can.successfully.register.for.classes.that.are.needed.for.my.major.and.major.concentration.based.on.class.availability.,
+              UG$I.can.successfully.register.for.classes.that.are.needed.for.my.major.and.major.concentration.based.on.class.availability.,
+              "I can successfully register for classes that are needed for my major and major concentration based on class availability.",
+              0.6)
+
+
+comp_barplot1(DS$I.feel.comfortable.reaching.out.to.my.advisor.about.opportunities.related.to.my.major.tips.on.succeeding.,
+              G$I.feel.comfortable.reaching.out.to.my.advisor.about.opportunities.related.to.my.major.tips.on.succeeding.,
+              UG$I.feel.comfortable.reaching.out.to.my.advisor.about.opportunities.related.to.my.major.tips.on.succeeding.,
+             "I feel comfortable reaching out to my advisor about opportunities related to my major tips on succeeding.",
+              0.8)
+
+comp_barplot1(DS$My.faculty.graduate.undergraduate.advisor.can.address.all.student.needs.on.their.own.,
+              G$My.faculty.graduate.undergraduate.advisor.can.address.all.student.needs.on.their.own.,
+              UG$My.faculty.graduate.undergraduate.advisor.can.address.all.student.needs.on.their.own.,
+              "My faculty/graduate/undergraduate advisor can address all student needs on their own.",
+              1)
+
+
+comp_barplot1(DS$I.know.where.to.go.for.help..if.needed..e.g..Food.Pantry..Title.IX.Office..Student.Disability.Resource.Center..SDRC...Office.of.Diversity..Equity.and.Inclusion..Counseling.and.Psychological.Services..CAPS...Case.Management..Student.Health.Services..The.WELL..etc...,
+              G$I.know.where.to.go.for.help..if.needed..e.g..Food.Pantry..Title.IX.Office..Student.Disability.Resource.Center..SDRC...Office.of.Diversity..Equity.and.Inclusion..Counseling.and.Psychological.Services..CAPS...Case.Management..Student.Health.Services..The.WELL..etc...,
+              UG$I.know.where.to.go.for.help..if.needed..e.g..Food.Pantry..Title.IX.Office..Student.Disability.Resource.Center..SDRC...Office.of.Diversity..Equity.and.Inclusion..Counseling.and.Psychological.Services..CAPS...Case.Management..Student.Health.Services..The.WELL..etc...,
+              "I know where to go for help if needed, eg. food pantry, student disability, etc.",
+              1)
+
+
+#general pop.
+comp_barplot4(DS$I.feel.safe.on.this.campus.,
+              G$I.feel.safe.on.this.campus.,
+              UG$I.feel.safe.on.this.campus.,
+              ft$I.feel.safe.on.this.campus.,
+              "I feel safe on this campus",
+              1)
+
+comp_barplot4(DS$I.am.comfortable.identifying.gender.sexual.orientation.race.disability.discrimination.,
+              G$I.am.comfortable.identifying.gender.sexual.orientation.race.disability.discrimination.,
+              UG$I.am.comfortable.identifying.gender.sexual.orientation.race.disability.discrimination.,
+              ft$I.am.comfortable.identifying.gender.sexual.orientation.race.disability.discrimination.,
+              "I.am.comfortable.identifying.gender.sexual.orientation.race.disability.discrimination.s",
+              1)
+
+comp_barplot4(DS$I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..,
+              G$I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..,
+              UG$I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..,
+              ft$I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..,
+              "I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..",
+              1)
+
+
+
+```
+
+```{r}
+#chi-sq (Goodness of fit) given num response
+Chi_num <- function(name)
+{
+  check <- na.omit(name)
+  
+  c <- label_terms(check) 
+
+  Count <- table(c)
+
+  total_D <- Count[1] + Count[2]
+  total_A <- Count[4] + Count[5]
+  Neutral <- Count[3]
+  New_Count <- c(total_D , Neutral , total_A )
+
+
+
+#assumption check 
+  #1) least 5 in each response
+  x <- barplot(New_Count)
+  text(x, New_Count - 0.5 , New_Count, font=0.5)
+  #2) randomness in data
+  #data taken from survey
+
+#Chi-sq result
+chisq.test(New_Count)
+
+}
+
+
+#chi-sq given word response (disagree, etc)
+Chi_res <- function(name)
+{
+ check <- na.omit(name)
+  
+  y <- number_terms(check)
+  
+  c <- label_terms(y) 
+  
+  Count <- table(c)
+  
+  total_D <- Count[1] + Count[2]
+  total_A <- Count[4] + Count[5]
+  Neutral <- Count[3]
+  New_Count <- c(total_D , Neutral , total_A )
+
+
+#assumption check 
+  #1) least 1 in each response
+  x <- barplot(New_Count)
+  text(x, New_Count - 0.5 , New_Count, font=0.5)
+  #2) randomness in data
+  #data taken from survey
+  
+
+#Chi-sq result
+chisq.test(New_Count)
+
+
+}
+
+```
+
+
+```{r}
+#data analysis (chi-sq)
+#H0: Equal proportions (p = 0.33) for the question
+#Ha: Unequal proportion (p != 0.33) for the question
+
+Chi_res(I.feel.valued.in.the.classroom.department.learning.environment.)
+
+Chi_res(I.feel.supported.in.my.statistics.classes.)
+
+Chi_res(My.staff.graduate.undergraduate.advisor.responds.to.my.needs.in.a.timely.manner.)
+
+Chi_num(I.have.a.clear.understanding.of.implicit.bias.and.microaggressions..as.they.pertain.to.race..culture..sexual.orientation..gender..disability..etc..)
+
+Chi_num(My.department.is.committed.to.forms.of.active.gender.sexual.orientation.race.disability.anti.discrimination.)
+
+Chi_res(I.am.comfortable.intervening.or.responding.to.incidents.of.gender.sexual.orientation.race.disability.discrimination.)
+
+Chi_res(I.feel.close.to.people.in.the.department.)
+
+Chi_res(Exams.given.by.my.instructors.in.the.department.are.fair.and.effective.at.testing.my.knowledge.of.the.material.)
+
+Chi_res(I.can.successfully.register.for.classes.that.are.needed.for.my.major.and.major.concentration.based.on.class.availability.)
+
+Chi_res(I.feel.comfortable.reaching.out.to.my.advisor.about.opportunities.related.to.my.major.tips.on.succeeding.)
+
+Chi_res(My.faculty.graduate.undergraduate.advisor.can.address.all.student.needs.on.their.own.)
+
+Chi_res(I.know.where.to.go.for.help..if.needed..e.g..Food.Pantry..Title.IX.Office..Student.Disability.Resource.Center..SDRC...Office.of.Diversity..Equity.and.Inclusion..Counseling.and.Psychological.Services..CAPS...Case.Management..Student.Health.Services..The.WELL..etc...)
+
+
+
+
+```
+
+
+
+
